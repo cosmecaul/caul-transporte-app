@@ -27,25 +27,29 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario no encontrado: " + username);
         }
 
+        String rawRole = (usuario.getRol() == null) ? "" : usuario.getRol().trim().toUpperCase();
+
+        // A prueba de balas: si viene "ADMIN" => "ROLE_ADMIN"
+        // si viene "ROLE_ADMIN" => se deja tal cual
+        String springRole = rawRole.startsWith("ROLE_") ? rawRole : "ROLE_" + rawRole;
+
         System.out.println("✅ [Auth] Usuario encontrado: " + usuario.getNombreUsuario()
-                + " | rol=" + usuario.getRol()
+                + " | rolDB=" + usuario.getRol()
+                + " | authority=" + springRole
                 + " | activo=" + usuario.getActivo());
 
-        // Rol con prefijo estándar de Spring
-        String springRole = "ROLE_" + usuario.getRol().toUpperCase();
-
-        List<SimpleGrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority(springRole)
-        );
+        List<SimpleGrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority(springRole));
 
         return new org.springframework.security.core.userdetails.User(
                 usuario.getNombreUsuario(),
                 usuario.getPasswordHash(),
-                Boolean.TRUE.equals(usuario.getActivo()), // enabled
-                true, // accountNonExpired
-                true, // credentialsNonExpired
-                true, // accountNonLocked
+                Boolean.TRUE.equals(usuario.getActivo()),
+                true,
+                true,
+                true,
                 authorities
         );
     }
+
 }
