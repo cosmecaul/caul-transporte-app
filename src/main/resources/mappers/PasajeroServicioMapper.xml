@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.PasajeroServicioMapper">
+
+    <resultMap id="PasajeroServicioResult"
+               type="cl.transporte.caul.model.PasajeroServicio">
+
+        <id     property="id" column="id"/>
+        <result property="idServicio" column="id_servicio"/>
+        <result property="nombrePasajero" column="nombre_pasajero"/>
+        <result property="telefonoContacto" column="telefono_contacto"/>
+        <result property="rutPasajero" column="rut_pasajero"/>
+        <result property="puntoSubida" column="punto_subida"/>
+        <result property="puntoBajada" column="punto_bajada"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- Listar pasajeros por servicio -->
+    <select id="findByServicioId" resultMap="PasajeroServicioResult">
+        SELECT *
+        FROM pasajero_servicio
+        WHERE id_servicio = #{idServicio}
+        ORDER BY id;
+    </select>
+
+    <!-- Buscar pasajero por ID -->
+    <select id="findById" resultMap="PasajeroServicioResult">
+        SELECT *
+        FROM pasajero_servicio
+        WHERE id = #{id};
+    </select>
+
+    <!-- Insertar pasajero -->
+    <insert id="insert"
+            parameterType="cl.transporte.caul.model.PasajeroServicio"
+            useGeneratedKeys="true"
+            keyProperty="id">
+
+        INSERT INTO pasajero_servicio
+        (
+            id_servicio,
+            nombre_pasajero,
+	        telefono_contacto      
+            rut_pasajero,
+            punto_subida,
+            punto_bajada,
+            observaciones
+        )
+        VALUES
+        (
+            #{idServicio},
+            #{nombrePasajero},
+            #{telefonoContacto},
+            #{rutPasajero},
+            #{puntoSubida},
+            #{puntoBajada},
+            #{observaciones}
+        );
+
+    </insert>
+
+    <!-- Eliminar pasajero -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM pasajero_servicio WHERE id = #{id};
+    </delete>
+
+    <!-- Eliminar pasajeros por servicio -->
+    <delete id="deleteByServicioId" parameterType="long">
+        DELETE FROM pasajero_servicio WHERE id_servicio = #{idServicio};
+    </delete>
+
+</mapper>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Detalle servicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex">
+    <!-- Sidebar (puedes copiar exactamente el de usuarios) -->
+    <aside class="hidden md:flex md:flex-col w-64 bg-slate-900 text-slate-100">
+        <!-- … mismo contenido que tu sidebar actual … -->
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center text-lg font-bold">
+                T
+            </div>
+            <div>
+                <div class="text-sm font-semibold">Transporte CAUL</div>
+                <div class="text-xs text-slate-400">Panel de administración</div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-3 py-4 text-sm space-y-1">
+            <a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+            <!-- … resto de links (conductores, vehículos, clientes, rutas, etc.) … -->
+            <a href="/admin/servicios" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800">
+                <span>🧾</span>
+                <span>Servicios</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-3 border-t border-slate-800 text-xs text-slate-400">
+            © <span id="yearSpanSidebar"></span> Transporte TPR
+        </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+        <!-- Header -->
+        <header class="w-full bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+            <div>
+                <h1 class="text-lg md:text-2xl font-semibold text-slate-900">
+                    Detalle servicio <span th:text="${servicio.id}">#ID</span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-500">
+                    Información del viaje y pasajeros.
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="/admin/servicios"
+                   class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                    ← Volver a servicios
+                </a>
+                <a href="/admin"
+                   class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                    📊 Dashboard
+                </a>
+            </div>
+        </header>
+
+        <!-- Contenido -->
+        <div class="flex-1 px-4 md:px-6 py-4 md:py-6 space-y-4 overflow-y-auto">
+
+            <!-- Tarjeta con datos básicos del servicio -->
+            <section class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+                <h2 class="text-sm font-semibold text-slate-900 mb-3">Información del servicio</h2>
+
+                <dl class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div>
+                        <dt class="text-slate-500">Fecha</dt>
+                        <dd class="text-slate-800 font-medium"
+                            th:text="${#dates.format(servicio.fecha, 'dd-MM-yyyy')}">01-01-2025</dd>
+                    </div>
+                    <div>
+                        <dt class="text-slate-500">Hora programada</dt>
+                        <dd class="text-slate-800 font-medium"
+                            th:text="${servicio.horaProgramada}">08:00</dd>
+                    </div>
+                    <div>
+                        <dt class="text-slate-500">Celular contacto</dt>
+                        <dd class="text-slate-800 font-medium"
+                            th:text="${telefonoContacto != null ? telefonoContacto : 'N/D'}">+56 9 ...</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-slate-500">Origen</dt>
+                        <dd class="text-slate-800 font-medium" th:text="${servicio.origen}">Origen</dd>
+                    </div>
+                    <div>
+                        <dt class="text-slate-500">Destino</dt>
+                        <dd class="text-slate-800 font-medium" th:text="${servicio.destino}">Destino</dd>
+                    </div>
+                    <div>
+                        <dt class="text-slate-500">Conductor</dt>
+                        <dd class="text-slate-800 font-medium" th:text="${servicio.nombreConductor}">Nombre</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-slate-500">Vehículo</dt>
+                        <dd class="text-slate-800 font-medium" th:text="${servicio.patenteVehiculo}">XX-YY-11</dd>
+                    </div>
+                    <div>
+                        <dt class="text-slate-500">Cliente</dt>
+                        <dd class="text-slate-800 font-medium" th:text="${servicio.nombreCliente}">Cliente X</dd>
+                    </div>
+                </dl>
+            </section>
+
+            <!-- Tarjeta con pasajeros -->
+            <section class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-slate-900">
+                        Pasajeros
+                        <span class="text-xs text-slate-500"
+                              th:text="'(' + ${#lists.size(pasajeros)} + ')'">(0)</span>
+                    </h2>
+                </div>
+
+                <div th:if="${#lists.isEmpty(pasajeros)}" class="text-xs text-slate-500">
+                    No hay pasajeros registrados para este servicio.
+                </div>
+
+                <div th:if="${!#lists.isEmpty(pasajeros)}" class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                        <thead class="border-b border-slate-200 bg-slate-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">RUT</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Celular</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                        <tr th:each="p : ${pasajeros}">
+                            <td class="px-3 py-2 text-slate-700" th:text="${p.nombre}">Nombre pasajero</td>
+                            <td class="px-3 py-2 text-slate-700" th:text="${p.rut}">11.111.111-1</td>
+                            <td class="px-3 py-2 text-slate-700" th:text="${p.celular}">+56 9 ...</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
+

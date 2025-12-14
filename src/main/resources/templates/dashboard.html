@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Transporte Empresarial</title>
+
+    <!-- Bootstrap CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <style>
+        body { padding: 1rem; }
+        .estado-chip {
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Servicios de hoy
+            <small class="text-muted" th:text="${hoy}"></small>
+        </h3>
+
+        <a href="/web/dashboard" class="btn btn-sm btn-outline-primary">
+            Actualizar
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Vehículo</th>
+                <th>Conductor</th>
+                <th>Ruta</th>
+                <th>Hora Prog.</th>
+                <th>Km Ini / Fin</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Estado</th>
+                <th>Cód. Público</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${servicios}"
+                th:classappend="
+                    ${s.estado} == 'EN_CURSO'    ? 'table-warning' :
+                    (${s.estado} == 'FINALIZADO' ? 'table-success' :
+                    (${s.estado} == 'CANCELADO'  ? 'table-danger'  :
+                    (${s.estado} == 'NO_REALIZADO' ? 'table-secondary' : '')))
+                ">
+                <td th:text="${s.id}"></td>
+                <td th:text="${s.clienteId}"></td>
+                <td th:text="${s.vehiculoId}"></td>
+                <td th:text="${s.conductorId}"></td>
+                <td th:text="${s.rutaId}"></td>
+
+                <td>
+                    <span th:text="${s.horaInicioProgramada}"></span>
+                    -
+                    <span th:text="${s.horaFinProgramada}"></span>
+                </td>
+
+                <td>
+                    <span th:text="${s.kmInicio}"></span>
+                    /
+                    <span th:text="${s.kmFin}"></span>
+                </td>
+
+                <td th:text="${s.origen}"></td>
+                <td th:text="${s.destino}"></td>
+
+                <td>
+                    <span class="estado-chip"
+                          th:classappend="
+                            ${s.estado} == 'PROGRAMADO'   ? 'bg-primary-subtle text-primary' :
+                            (${s.estado} == 'EN_CURSO'    ? 'bg-warning-subtle text-warning' :
+                            (${s.estado} == 'FINALIZADO'  ? 'bg-success-subtle text-success' :
+                            (${s.estado} == 'CANCELADO'   ? 'bg-danger-subtle text-danger' :
+                            'bg-secondary-subtle text-secondary')))
+                          "
+                          th:text="${s.estado}">
+                    </span>
+                </td>
+
+                <td th:text="${s.codigoPublico}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

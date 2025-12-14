@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Vehículo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+        <div>
+            <h1 class="text-lg md:text-2xl font-semibold text-slate-900" th:text="${pageTitle}">Vehículo</h1>
+            <p class="text-xs md:text-sm text-slate-500">
+                Completa la información del vehículo.
+            </p>
+        </div>
+        <a href="/admin/vehiculos"
+           class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+            ← Volver al listado
+        </a>
+    </header>
+
+    <!-- Contenido -->
+    <main class="flex-1 px-4 md:px-6 py-4 md:py-6">
+        <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm max-w-3xl mx-auto">
+
+            <form th:object="${form}"
+                  th:action="${vehiculoId} != null ?
+                        @{/admin/vehiculos/{id}/editar(id=${vehiculoId})} :
+                        @{/admin/vehiculos/nuevo}"
+                  method="post"
+                  class="space-y-4">
+
+                <!-- Errores globales -->
+                <div th:if="${#fields.hasGlobalErrors()}"
+                     class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+                    <p th:each="err : ${#fields.globalErrors()}"
+                       th:text="${err}">Error global</p>
+                </div>
+
+                <!-- Patente / MarcaModelo -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Patente</label>
+                        <input type="text" th:field="*{patente}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                               placeholder="AA-BB-11" required />
+                        <p class="text-[10px] text-red-500 mt-0.5" th:if="${#fields.hasErrors('patente')}"
+                           th:errors="*{patente}">Error patente</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Marca / Modelo</label>
+                        <input type="text" th:field="*{marcaModelo}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                               placeholder="Hyundai Staria 2.2 CRDi" />
+                        <p class="text-[10px] text-red-500 mt-0.5" th:if="${#fields.hasErrors('marcaModelo')}"
+                           th:errors="*{marcaModelo}">Error marca/modelo</p>
+                    </div>
+					<di>
+						<label class="text-xs font-medium text-slate-600">Tipo de vehículo</label>
+						<select th:field="*{tipoVehiculo}"
+						        class="border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-sm">
+						    <option value="">Seleccionar</option>
+						    <option value="VAN">Van de pasajeros</option>
+						    <option value="CAMIONETA">Camioneta</option>
+						    <option value="AUTO">Auto</option>
+						    <option value="MINIBUS">Minibús</option>
+						</select>
+					</di>
+					
+					
+                </div>
+
+                <!-- Año / Capacidad -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Año</label>
+                        <input type="number" th:field="*{anio}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                               min="1990" max="2100" />
+                        <p class="text-[10px] text-red-500 mt-0.5" th:if="${#fields.hasErrors('anio')}"
+                           th:errors="*{anio}">Error año</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Capacidad (pasajeros)</label>
+                        <input type="number" th:field="*{capacidad}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                               min="1" />
+                        <p class="text-[10px] text-red-500 mt-0.5" th:if="${#fields.hasErrors('capacidad')}"
+                           th:errors="*{capacidad}">Error capacidad</p>
+                    </div>
+                </div>
+
+                <!-- Decreto 80 -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        Vencimiento Decreto 80
+                    </label>
+                    <input type="date" th:field="*{decreto80Vencimiento}"
+					   class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" />
+                    <p class="text-[10px] text-red-500 mt-0.5" th:if="${#fields.hasErrors('decreto80Vencimiento')}"
+                       th:errors="*{decreto80Vencimiento}">Error decreto 80</p>
+                </div>
+
+                <!-- GPS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Proveedor GPS</label>
+                        <input type="text" th:field="*{gpsProveedor}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                               placeholder="Tracktec, GpsChile, etc." />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Device ID GPS</label>
+                        <input type="text" th:field="*{gpsDeviceId}"
+                               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" />
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" th:field="*{gpsActivo}"
+                           class="rounded border-slate-300" />
+                    <span class="text-xs text-slate-700">GPS activo</span>
+                </div>
+
+                <!-- Observaciones -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Observaciones</label>
+                    <textarea th:field="*{observaciones}"
+                              class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                              rows="3"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="pt-2 flex justify-end gap-2">
+                    <a href="/admin/vehiculos"
+                       class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="text-xs md:text-sm px-4 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
+

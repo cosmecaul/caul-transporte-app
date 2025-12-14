@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pasajeros del Servicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex md:flex-col w-64 bg-slate-900 text-slate-100">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-2xl bg-white text-slate-900 flex items-center justify-center font-bold">
+                T
+            </div>
+            <div>
+                <div class="text-sm font-semibold">Transporte CAUL</div>
+                <div class="text-xs text-slate-400">Panel administración</div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-3 py-4 text-sm space-y-1">
+            <a href="/admin" class="block px-3 py-2 rounded-xl hover:bg-slate-800">
+                📊 Dashboard
+            </a>
+            <div class="text-[11px] uppercase text-slate-500 px-3 mt-3">Operación</div>
+            <a href="/aplicacion/servicios" class="block px-3 py-2 rounded-xl hover:bg-slate-800">
+                🧾 Servicios (hoy)
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+        <!-- HEADER -->
+        <header class="w-full bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex justify-between">
+            <div>
+                <h1 class="text-xl font-semibold">Pasajeros del Servicio</h1>
+                <p class="text-xs text-slate-500">Servicio ID:
+                    <span th:text="${servicio.id}"></span>
+                </p>
+            </div>
+
+            <a href="/admin"
+               class="px-3 py-1.5 text-xs border rounded-xl hover:bg-slate-100">
+                Volver
+            </a>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="p-4 md:p-6">
+
+            <!-- BOTÓN AGREGAR PASAJERO -->
+            <div class="flex justify-between mb-3">
+                <h2 class="text-sm text-slate-600">Listado de pasajeros</h2>
+                <button onclick="openModal()"
+                        class="bg-slate-900 text-white text-xs px-4 py-2 rounded-full hover:bg-slate-800">
+                    + Agregar pasajero
+                </button>
+            </div>
+
+            <!-- TABLA PASAJEROS -->
+            <div class="bg-white rounded-2xl shadow border">
+                <table class="min-w-full text-xs">
+                    <thead class="bg-slate-50 border-b">
+                    <tr>
+                        <th class="px-3 py-2 text-left">Nombre</th
+                        <th class="px-3 py-2 text-left">Telefono Contacto</th>
+						<th class="px-3 py-2 text-left">Subida</th>
+                        <th class="px-3 py-2 text-left">Bajada</th>
+                        <th class="px-3 py-2 text-left">Obs</th>
+                        <th class="px-3 py-2"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="tablaPasajeros" class="divide-y divide-slate-200">
+                    <tr th:each="p : ${pasajeros}" th:id="'row-'+${p.id}">
+                        <td class="px-3 py-2" th:text="${p.nombrePasajero}"></td>
+                        <td class="px-3 py-2" th:text="${p.telefonoContacto}"></td>
+                        <td class="px-3 py-2" th:text="${p.puntoSubida}"></td>
+                        <td class="px-3 py-2" th:text="${p.puntoBajada}"></td>
+                        <td class="px-3 py-2" th:text="${p.observaciones}"></td>
+                        <td class="px-3 py-2">
+                    <!--        <button class="text-red-600" onclick="eliminarPasajero([[${p.id}]])">
+                                ✖
+                            </button>-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${pasajeros.size() == 0}" class="p-3 text-center text-slate-400 text-xs">
+                    No hay pasajeros registrados.
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<!-- MODAL AGREGAR PASAJERO -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md space-y-4">
+
+        <h2 class="text-sm font-semibold">Agregar pasajero</h2>
+
+        <input id="nombre" class="input" placeholder="Nombre del pasajero" />
+        <input id="telefonoContacto" class="input" placeholder="Telefono" />
+        <input id="subida" class="input" placeholder="Punto de subida" />
+        <input id="bajada" class="input" placeholder="Punto de bajada" />
+        <textarea id="obs" class="input" placeholder="Observaciones"></textarea>
+
+        <div class="flex justify-between mt-3">
+            <button onclick="closeModal()" class="px-3 py-1.5 border rounded-xl">Cancelar</button>
+
+            <button onclick="guardarPasajero()"
+                    class="px-4 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const idServicio = [[${servicio.id}]];
+
+    function openModal() {
+        document.getElementById("modal").classList.remove("hidden");
+    }
+    function closeModal() {
+        document.getElementById("modal").classList.add("hidden");
+    }
+
+    async function guardarPasajero() {
+
+        const payload = {
+            nombrePasajero: document.getElementById("nombre").value,
+			telefonoContacto: document.getElementById("telefonoContacto").value,
+			puntoSubida: document.getElementById("subida").value,
+            puntoBajada: document.getElementById("bajada").value,
+            observaciones: document.getElementById("obs").value
+        };
+
+        const res = await fetch(`/admin/servicios/${idServicio}/pasajeros`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        // Agregar fila a la tabla sin recargar
+        document.getElementById("tablaPasajeros").innerHTML += `
+            <tr id="row-${data.id}">
+                <td class="px-3 py-2">${data.nombrePasajero}</td>
+                <td class="px-3 py-2">${data.telefonoContacto}</td>
+                <td class="px-3 py-2">${data.puntoSubida}</td>
+                <td class="px-3 py-2">${data.puntoBajada}</td>
+                <td class="px-3 py-2">${data.observaciones ?? ""}</td>
+                <td class="px-3 py-2">
+                    <button class="text-red-600" onclick="eliminarPasajero(${data.id})">✖</button>
+                </td>
+            </tr>
+        `;
+
+        closeModal();
+    }
+
+    async function eliminarPasajero(id) {
+        await fetch(`/admin/pasajeros/${id}`, { method: "DELETE" });
+        document.getElementById("row-" + id).remove();
+    }
+</script>
+
+</body>
+</html>

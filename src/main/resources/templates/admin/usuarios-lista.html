@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Usuarios · Panel Administración</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex">
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+        <!-- Header -->
+		<header class="w-full bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+		    <div>
+		        <h1 class="text-lg md:text-2xl font-semibold text-slate-900">Usuarios</h1>
+		        <p class="text-xs md:text-sm text-slate-500">
+		            Gestión de cuentas para acceso al sistema (ADMIN, OPERADOR, CONDUCTOR, CLIENTE_CORP).
+		        </p>
+		    </div>
+		    <div class="flex items-center gap-2">
+		        <!-- Volver al dashboard -->
+		        <a href="/admin"
+		           class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+		            ← Volver al dashboard
+		        </a>
+
+		        <!-- Nuevo usuario -->
+		        <a href="/admin/usuarios/nuevo"
+		           class="text-xs md:text-sm px-3 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800">
+		            + Nuevo usuario
+		        </a>
+		    </div>
+		</header>
+
+        <!-- Contenido -->
+        <div class="flex-1 px-4 md:px-6 py-4 md:py-6 space-y-4 overflow-y-auto">
+
+            <!-- Mensajes -->
+            <div th:if="${messageSuccess}"
+                 class="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+                <span th:text="${messageSuccess}"></span>
+            </div>
+            <div th:if="${messageError}"
+                 class="px-4 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+                <span th:text="${messageError}"></span>
+            </div>
+
+            <!-- Tabla usuarios -->
+            <section class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-slate-900">Listado de usuarios</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                        <thead class="border-b border-slate-200 bg-slate-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Usuario</th>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre completo</th>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Email</th>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Rol</th>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Cliente</th>
+                                <th class="px-3 py-2 text-left font-semibold text-slate-600">Estado</th>
+                                <!-- NUEVA COLUMNA ACCIONES -->
+                                <th class="px-3 py-2 text-right font-semibold text-slate-600">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" th:if="${usuarios != null}">
+                            <tr th:if="${#lists.isEmpty(usuarios)}">
+                                <!-- ajustar colspan: ahora 7 columnas -->
+                                <td colspan="7" class="px-3 py-4 text-center text-slate-400">
+                                    No hay usuarios creados todavía.
+                                </td>
+                            </tr>
+                            <tr th:each="u : ${usuarios}">
+                                <td class="px-3 py-2 text-slate-700" th:text="${u.nombreUsuario}">admin</td>
+                                <td class="px-3 py-2 text-slate-700" th:text="${u.nombreCompleto}">Nombre</td>
+                                <td class="px-3 py-2 text-slate-700" th:text="${u.email}">correo@empresa.cl</td>
+                                <td class="px-3 py-2 text-slate-700" th:text="${u.rol}">ADMIN</td>
+                                <td class="px-3 py-2 text-slate-700" th:text="${u.idCliente}">—</td>
+                                <td class="px-3 py-2">
+                                    <span th:if="${u.activo}"
+                                          class="inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
+                                        Activo
+                                    </span>
+                                    <span th:if="${!u.activo}"
+                                          class="inline-flex px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[11px]">
+                                        Inactivo
+                                    </span>
+                                </td>
+                                <!-- CELDA ACCIONES -->
+								<td class="px-3 py-2 text-right">
+								       <div class="inline-flex items-center gap-1">
+								           <!-- Editar -->
+								           <a th:href="@{'/admin/usuarios/' + ${u.id} + '/editar'}"
+								              class="px-2 py-1 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-100">
+								               Editar
+								           </a>
+
+								           <!-- Eliminar -->
+								           <form th:action="@{'/admin/usuarios/' + ${u.id} + '/eliminar'}"
+								                 method="post"
+								                 class="inline"
+								                 onsubmit="return confirm('¿Eliminar este usuario?');">
+								               <button type="submit"
+								                       class="px-2 py-1 rounded-full border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100">
+								                   Eliminar
+								               </button>
+								           </form>
+								       </div>
+								   </td>                          
+							   </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script>
+    const today = new Date();
+    const yearSpanSidebar = document.getElementById("yearSpanSidebar");
+    if (yearSpanSidebar) {
+        yearSpanSidebar.textContent = today.getFullYear();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Usuario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen p-6">
+
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-6">
+
+    <h1 class="text-2xl font-semibold text-slate-900 mb-1">Crear usuario</h1>
+    <p class="text-sm text-slate-500 mb-6">Asignar perfil y credenciales.</p>
+
+    <!-- Mensajes -->
+    <div th:if="${messageError}"
+         class="mb-3 p-3 rounded-xl bg-red-50 text-red-700 text-sm"
+         th:text="${messageError}">
+    </div>
+    <div th:if="${messageSuccess}"
+         class="mb-3 p-3 rounded-xl bg-emerald-50 text-emerald-700 text-sm"
+         th:text="${messageSuccess}">
+    </div>
+
+    <form th:action="@{/admin/usuarios/nuevo}" th:object="${form}" method="post" class="space-y-4">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs font-medium text-slate-600">Nombre de usuario</label>
+                <input type="text" th:field="*{nombreUsuario}"
+                       class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+            </div>
+
+            <div>
+                <label class="text-xs font-medium text-slate-600">Contraseña</label>
+                <input type="password" th:field="*{password}"
+                       class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs font-medium text-slate-600">Nombre completo</label>
+            <input type="text" th:field="*{nombreCompleto}"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+        </div>
+		<div>
+            <label class="text-xs font-medium text-slate-600">Rut</label>
+            <input type="text" th:field="*{rut}"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+        </div>
+
+		
+		
+		
+        <div>
+            <label class="text-xs font-medium text-slate-600">Correo electrónico</label>
+            <input type="email" th:field="*{email}"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div>
+                <label class="text-xs font-medium text-slate-600">Rol</label>
+                <select th:field="*{rol}"
+                        class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                    <option value="">Seleccionar</option>
+                    <option value="ADMIN">Administrador</option>
+                    <option value="OPERADOR">Operador</option>
+                    <option value="CONDUCTOR">Conductor</option>
+                    <option value="CLIENTE_CORP">Cliente corporativo</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-xs font-medium text-slate-600">Cliente asociado (opcional)</label>
+                <input type="number" th:field="*{idCliente}"
+                       class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm"
+                       placeholder="ID cliente o vacío">
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs font-medium text-slate-600">Activo</label>
+            <select th:field="*{activo}" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+            </select>
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <a href="/admin/usuarios"
+               class="px-3 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm">
+                Cancelar
+            </a>
+
+            <button type="submit"
+                    class="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-sm">
+                Crear usuario
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

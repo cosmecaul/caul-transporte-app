@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Admin · Clientes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+        <div>
+            <h1 class="text-lg md:text-2xl font-semibold text-slate-900">Clientes</h1>
+            <p class="text-xs md:text-sm text-slate-500">
+                Empresas y contactos para servicios CAUL.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/admin"
+               class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                ← Volver al dashboard
+            </a>
+            <a href="/admin/clientes/nuevo"
+               class="text-xs md:text-sm px-3 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                + Nuevo cliente
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="flex-1 px-4 md:px-6 py-4 md:py-6">
+
+        <!-- Mensaje flash -->
+        <div th:if="${message}"
+             class="mb-3 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+            <span th:text="${message}">Mensaje</span>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-900">Listado de clientes</h2>
+                    <p class="text-xs text-slate-500">
+                        Puedes filtrar solo activos y editar la información de contacto.
+                    </p>
+                </div>
+
+                <!-- Filtro solo activos -->
+                <form th:action="@{/admin/clientes}" method="get"
+                      class="flex items-center gap-2 text-xs">
+                    <label class="inline-flex items-center gap-1 cursor-pointer">
+                        <input type="checkbox" name="soloActivos"
+                               th:checked="${soloActivos}"
+                               value="true"
+                               class="rounded border-slate-300">
+                        <span class="text-slate-700">Mostrar solo activos</span>
+                    </label>
+                    <button type="submit"
+                            class="px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                        Aplicar
+                    </button>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-xs">
+                    <thead class="border-b border-slate-200 bg-slate-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Razón social</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">RUT</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Giro</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Contacto</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Teléfono</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Email</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Ciudad</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Estado</th>
+                        <th class="px-3 py-2 text-right font-semibold text-slate-600">Acciones</th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100" th:if="${clientes != null}">
+                    <tr th:each="c : ${clientes}">
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.razonSocial}">Empresa X</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.rut}">76.123.456-7</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.giro}">Transporte</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.contactoNombre}">Juan Pérez</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.contactoFono}">+56 9 ...</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.contactoEmail}">mail@empresa.cl</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.ciudad}">Antofagasta</td>
+                        <td class="px-3 py-2">
+                            <span th:if="${c.activo}"
+                                  class="inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                                Activo
+                            </span>
+                            <span th:if="${!c.activo}"
+                                  class="inline-flex px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                                Inactivo
+                            </span>
+                        </td>
+                        <td class="px-3 py-2 text-right">
+                            <a th:href="@{'/admin/clientes/' + ${c.id} + '/editar'}"
+                               class="px-2 py-1 rounded-full border text-slate-700 border-slate-300 hover:bg-slate-100">
+                                Editar
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(clientes)}">
+                        <td colspan="9" class="px-3 py-3 text-center text-slate-400">
+                            No hay clientes registrados aún.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.ConductorMapper">
+
+    <resultMap id="ConductorResult" type="cl.transporte.caul.model.Conductor">
+    <id     property="id"                 column="id"/>
+    <result property="nombreCompleto"    column="nombre_completo"/>
+    <result property="rut"               column="rut"/>
+    <result property="telefono"          column="telefono"/>
+    <result property="email"             column="email"/>
+    <result property="licenciaClase"     column="licencia_clase"/>
+    <result property="licenciaVencimiento" column="licencia_vencimiento"/>
+    <result property="observaciones"     column="observaciones"/>
+    <result property="activo"            column="activo"/>
+    <result property="createdAt"         column="created_at"/>
+    <result property="updatedAt"         column="updated_at"/>
+</resultMap>
+
+    <!-- Listar todos -->
+    <select id="findAll" resultMap="ConductorResult">
+        SELECT *
+        FROM conductor
+        ORDER BY nombre_completo;
+    </select>
+
+    <!-- Solo activos -->
+    <select id="findActivos" resultMap="ConductorResult">
+        SELECT *
+        FROM conductor
+        WHERE activo = 1
+        ORDER BY nombre_completo;
+    </select>
+
+    <!-- Buscar por ID -->
+    <select id="findById" resultMap="ConductorResult">
+        SELECT *
+        FROM conductor
+        WHERE id = #{id};
+    </select>
+
+    <!-- Insertar -->
+    <insert id="insert" parameterType="cl.transporte.caul.model.Conductor"
+        useGeneratedKeys="true" keyProperty="id">
+
+    INSERT INTO conductor (
+        nombre_completo,
+        rut,
+        telefono,
+        email,
+        licencia_clase,
+        licencia_vencimiento,
+        observaciones,
+        activo
+    )
+    VALUES (
+        #{nombreCompleto},
+        #{rut},
+        #{telefono},
+        #{email},
+        #{licenciaClase},
+        #{licenciaVencimiento},
+        #{observaciones},
+        #{activo}
+    );
+</insert>
+
+
+    <!-- Actualizar -->
+   <update id="update" parameterType="cl.transporte.caul.model.Conductor">
+    UPDATE conductor
+    SET
+        nombre_completo      = #{nombreCompleto},
+        rut                  = #{rut},
+        telefono             = #{telefono},
+        email                = #{email},
+        licencia_clase       = #{licenciaClase},
+        licencia_vencimiento = #{licenciaVencimiento},
+        observaciones        = #{observaciones},
+        activo               = #{activo}
+    WHERE id = #{id};
+</update>
+
+
+    <!-- Eliminar -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM conductor WHERE id = #{id};
+    </delete>
+    
+    <select id="findIdByRut" resultType="long">
+  SELECT id FROM conductor WHERE rut = #{rut} LIMIT 1
+</select>
+
+</mapper>

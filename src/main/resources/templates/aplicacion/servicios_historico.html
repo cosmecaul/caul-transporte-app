@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Histórico de servicios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+
+<div class="max-w-xl mx-auto px-4 py-5">
+
+    <!-- Header -->
+    <header class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Histórico</h1>
+                <p class="text-sm text-slate-500">Servicios realizados</p>
+            </div>
+
+            <a th:href="@{/aplicacion/servicios}"
+               class="text-xs px-3 py-1.5 rounded-full border border-slate-300
+                      text-slate-700 hover:bg-slate-50">
+                ← Volver
+            </a>
+        </div>
+    </header>
+
+    <!-- Filtros -->
+    <form method="get"
+          class="bg-white rounded-2xl shadow p-4 mb-6 grid grid-cols-2 gap-3">
+
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">Desde</label>
+            <input type="date" name="desde" th:value="${desde}"
+                   class="w-full border rounded-lg px-3 py-2"/>
+        </div>
+
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">Hasta</label>
+            <input type="date" name="hasta" th:value="${hasta}"
+                   class="w-full border rounded-lg px-3 py-2"/>
+        </div>
+
+        <div class="col-span-2">
+            <button class="w-full bg-slate-900 hover:bg-slate-800
+                           text-white rounded-lg py-2 font-medium transition">
+                Aplicar filtros
+            </button>
+        </div>
+    </form>
+
+    <!-- KPIs rápidos -->
+    <section class="grid grid-cols-2 gap-3 mb-6">
+        <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-500">Total servicios</p>
+            <p class="text-2xl font-bold"
+               th:text="${#lists.size(data.servicios)}">0</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-500">% Finalizados</p>
+            <p class="text-2xl font-bold text-green-700">
+                <span th:text="${#numbers.formatDecimal(
+                    (#lists.size(data.servicios) == 0 ? 0 :
+                    (#lists.sum(data.servicios.^[#this.estado == 'FINALIZADO']?.size()) * 100.0 /
+                     #lists.size(data.servicios))), 0, 0)}">0</span>%
+            </p>
+        </div>
+    </section>
+
+    <!-- Resumen semanal -->
+    <section class="bg-white rounded-2xl shadow p-4 mb-5">
+        <h3 class="font-semibold mb-3">Resumen semanal</h3>
+
+        <div class="space-y-2">
+            <div th:each="r : ${data.resumenSemanal}"
+                 class="flex justify-between items-center text-sm border-b last:border-b-0 pb-1">
+                <span th:text="${r.periodo}"></span>
+                <span class="font-medium text-slate-700">
+                    <span th:text="${r.finalizados}"></span> /
+                    <span th:text="${r.totalServicios}"></span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resumen mensual -->
+    <section class="bg-white rounded-2xl shadow p-4 mb-6">
+        <h3 class="font-semibold mb-3">Resumen mensual</h3>
+
+        <div class="space-y-2">
+            <div th:each="r : ${data.resumenMensual}"
+                 class="flex justify-between items-center text-sm border-b last:border-b-0 pb-1">
+                <span th:text="${r.periodo}"></span>
+                <span class="font-medium text-slate-700">
+                    <span th:text="${r.finalizados}"></span> /
+                    <span th:text="${r.totalServicios}"></span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detalle de servicios -->
+    <section class="space-y-4">
+
+        <article th:each="s : ${data.servicios}"
+                 class="bg-white rounded-2xl shadow p-4">
+
+            <div class="flex justify-between items-center mb-3">
+                <div class="text-xs text-slate-500"
+                     th:text="${s.fecha} + ' · ' + ${s.hora}">
+                </div>
+
+                <span th:text="${s.estado}"
+                      th:classappend="
+                        ${s.estado == 'FINALIZADO'} ? 'bg-green-100 text-green-700' :
+                        (${s.estado == 'EN_CURSO'} ? 'bg-blue-100 text-blue-700' :
+                        'bg-yellow-100 text-yellow-700')"
+                      class="px-2 py-1 rounded-full text-xs font-semibold uppercase">
+                </span>
+            </div>
+
+            <!-- Origen / destino con timeline -->
+            <div class="relative pl-6">
+                <span class="absolute left-1 top-2 w-2 h-2 bg-slate-900 rounded-full"></span>
+                <span class="absolute left-[5px] top-4 h-6 w-px bg-slate-300"></span>
+                <span class="absolute left-1 top-10 w-2 h-2 bg-slate-300 rounded-full"></span>
+
+                <div class="space-y-4">
+                    <p class="text-sm font-medium"
+                       th:text="${s.origen}"></p>
+                    <p class="text-sm text-slate-600"
+                       th:text="${s.destino}"></p>
+                </div>
+            </div>
+        </article>
+
+        <div th:if="${#lists.isEmpty(data.servicios)}"
+             class="text-center text-slate-500 py-12 bg-white rounded-xl shadow">
+            No hay servicios en este período
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>
+

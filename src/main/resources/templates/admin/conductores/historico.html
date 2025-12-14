@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Histórico de servicios</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <div>
+      <h1>Histórico de servicios</h1>
+      <p class="muted">Conductor ID: <b th:text="${conductorId}">1</b></p>
+    </div>
+    <div class="actions">
+      <a class="btn" th:href="@{/admin/dashboard}">Volver dashboard</a>
+    </div>
+  </div>
+
+  <form class="card" method="get" th:action="@{|/admin/conductores/${conductorId}/historico|}">
+    <div class="grid-3">
+      <div>
+        <label>Desde</label>
+        <input type="date" name="desde" th:value="${desde}"/>
+      </div>
+      <div>
+        <label>Hasta</label>
+        <input type="date" name="hasta" th:value="${hasta}"/>
+      </div>
+      <div class="right">
+        <label>&nbsp;</label>
+        <button class="btn-primary" type="submit">Aplicar</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Totales por semana</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Semana</th>
+            <th>Servicios</th>
+            <th>KM</th>
+            <th>Final.</th>
+            <th>Prog.</th>
+            <th>En curso</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="r : ${resumenSemanal}">
+            <td th:text="${r.periodo}">2025-W49</td>
+            <td th:text="${r.totalServicios}">0</td>
+            <td th:text="${r.kmTotales}">0</td>
+            <td th:text="${r.totalFinalizados}">0</td>
+            <td th:text="${r.totalProgramados}">0</td>
+            <td th:text="${r.totalEnCurso}">0</td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(resumenSemanal)}">
+            <td colspan="6" class="muted">Sin datos.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Totales por mes</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Servicios</th>
+            <th>KM</th>
+            <th>Final.</th>
+            <th>Prog.</th>
+            <th>En curso</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="r : ${resumenMensual}">
+            <td th:text="${r.periodo}">2025-12</td>
+            <td th:text="${r.totalServicios}">0</td>
+            <td th:text="${r.kmTotales}">0</td>
+            <td th:text="${r.totalFinalizados}">0</td>
+            <td th:text="${r.totalProgramados}">0</td>
+            <td th:text="${r.totalEnCurso}">0</td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(resumenMensual)}">
+            <td colspan="6" class="muted">Sin datos.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Detalle</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Estado</th>
+          <th>Código</th>
+          <th>KM (ini/fin)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${servicios}">
+          <td th:text="${s.fecha}">2025-12-11</td>
+          <td th:text="${s.horaInicioProgramada}">07:30</td>
+          <td th:text="${s.origen}">Base</td>
+          <td th:text="${s.destino}">Planta</td>
+          <td th:text="${s.estado}">PROGRAMADO</td>
+          <td th:text="${s.codigoPublico}">SERV-001</td>
+          <td>
+            <span th:text="${s.kmInicio}">0</span>
+            /
+            <span th:text="${s.kmFin}">0</span>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(servicios)}">
+          <td colspan="7" class="muted">Sin servicios en el rango.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

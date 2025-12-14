@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Crear servicio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<header class="bg-white border-b px-4 md:px-6 py-3 flex items-center justify-between">
+    <h1 class="text-lg md:text-2xl font-semibold text-slate-900" th:text="${pageTitle}">
+        Nuevo Servicio
+    </h1>
+
+    <a href="/aplicacion/servicios"
+       class="text-xs px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+        ← Volver
+    </a>
+</header>
+
+<main class="px-4 md:px-6 py-6">
+
+    <form th:action="@{${formAction}}" method="post"
+          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-3xl mx-auto space-y-5">
+
+        <!-- FECHA -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Fecha</label>
+            <input type="date" name="fecha"
+                   th:value="${form.fecha}"
+                   required
+                   class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+        </div>
+
+        <!-- TURNO -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Turno</label>
+            <select name="turno"
+                    th:value="${form.turno}"
+                    required
+                    class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+                <option value="">Seleccione turno</option>
+                <option value="AM" th:selected="${form.turno == 'AM'}">AM</option>
+                <option value="PM" th:selected="${form.turno == 'PM'}">PM</option>
+                <option value="NOCHE" th:selected="${form.turno == 'NOCHE'}">NOCHE</option>
+            </select>
+        </div>
+
+        <!-- CLIENTE -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Cliente</label>
+            <select name="clienteId"
+                    th:value="${form.clienteId}"
+                    required
+                    class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+                <option value="">Seleccione cliente</option>
+                <option th:each="c : ${clientes}"
+                        th:value="${c.id}"
+                        th:text="${c.razonSocial}">
+                </option>
+            </select>
+        </div>
+
+        <!-- VEHÍCULO -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Vehículo</label>
+            <select name="vehiculoId"
+                    th:value="${form.vehiculoId}"
+                    required
+                    class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+                <option value="">Seleccione vehículo</option>
+                <option th:each="v : ${vehiculos}"
+                        th:value="${v.id}"
+                        th:text="${v.patente}">
+                </option>
+            </select>
+        </div>
+
+        <!-- CONDUCTOR -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Conductor</label>
+            <select name="conductorId"
+                    th:value="${form.conductorId}"
+                    required
+                    class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+                <option value="">Seleccione conductor</option>
+                <option th:each="d : ${conductores}"
+                        th:value="${d.id}"
+                        th:text="${d.nombreCompleto}">
+                </option>
+            </select>
+        </div>
+
+        <!-- ORIGEN -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Origen</label>
+            <input type="text" name="origen"
+                   th:value="${form.origen}"
+                   required
+                   class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+        </div>
+
+        <!-- DESTINO -->
+        <div>
+            <label class="text-xs font-medium text-slate-600">Destino</label>
+            <input type="text" name="destino"
+                   th:value="${form.destino}"
+                   required
+                   class="mt-1 w-full px-3 py-2 rounded-xl border text-xs">
+        </div>
+
+        <!-- BOTÓN -->
+        <div class="pt-3">
+            <button class="w-full py-2 rounded-xl bg-slate-900 text-white text-xs hover:bg-slate-800">
+                Guardar servicio
+            </button>
+        </div>
+
+    </form>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.VehiculoMapper">
+
+    <resultMap id="VehiculoResult" type="cl.transporte.caul.model.Vehiculo">
+        <id     property="id" column="id"/>
+        <result property="patente" column="patente"/>
+        <result property="marcaModelo" column="marca_modelo"/>
+        <result property="tipoVehiculo" column="tipo_vehiculo"/>
+        <result property="anio" column="anio"/>
+        <result property="capacidad" column="capacidad" />
+        <result property="decreto80Vencimiento" column="decreto80_vencimiento"/>
+        <result property="gpsDeviceId" column="gps_deviceid" />
+        <result property="gpsProveedor" column="gps_proveedor" />
+        <result property="gpsActivo" column="gps_activo"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="VehiculoResult">
+        SELECT * FROM vehiculo;
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="VehiculoResult">
+        SELECT * FROM vehiculo WHERE id = #{id};
+    </select>
+
+<insert id="insert" parameterType="cl.transporte.caul.model.Vehiculo"
+        useGeneratedKeys="true" keyProperty="id">
+
+    INSERT INTO vehiculo
+    (
+        patente,
+        marca_modelo,
+        tipo_vehiculo,
+        anio,
+        capacidad,
+        decreto80_vencimiento,
+        gps_device_id,
+        gps_proveedor,
+        gps_activo,
+        observaciones
+    )
+    VALUES
+    (
+        #{patente},
+        #{marcaModelo},
+        #{tipoVehiculo},
+        #{anio},
+        #{capacidad},
+        #{decreto80Vencimiento},
+        #{gpsDeviceId},
+        #{gpsProveedor},
+        #{gpsActivo},
+        #{observaciones}
+    );
+</insert>
+
+  <update id="update" parameterType="cl.transporte.caul.model.Vehiculo">
+
+    UPDATE vehiculo
+    SET
+        patente 		= #{patente},
+        marca_modelo 	= #{marcaModelo},
+        tipo_vehiculo	= #{tipoVehiculo},
+        anio 			= #{anio},
+        capacidad 		= #{capacidad},
+        decreto80_vencimiento = #{decreto80Vencimiento},
+        gps_device_id 	= #{gpsDeviceId},
+        gps_proveedor 	= #{gpsProveedor},
+        gps_activo 		= #{gpsActivo},
+        observaciones 	= #{observaciones}
+    WHERE id = #{id};
+
+</update>
+    <delete id="delete" parameterType="long">
+        DELETE FROM vehiculo WHERE id = #{id};
+    </delete>
+
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="layout/base :: content">
+<head>
+    <title>Admin</title>
+</head>
+<body>
+<div th:with="${pageTitle}='Admin · Dashboard', ${menu}='dashboard'">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-0">Panel de administración</h3>
+            <p class="text-muted mb-0">
+                Desde aquí puedes poblar clientes, conductores, vehículos, rutas y servicios.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-6 col-xl-4" >
+            <a href="/admin/vehiculos" class="text-decoration-none text-reset">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Vehículos</h5>
+                        <p class="card-text text-muted mb-2">
+                            Patentes, decreto 80, capacidad, GPS, etc.
+                        </p>
+                        <span class="badge bg-dark-subtle text-dark">Alta prioridad</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <a href="/admin/conductores" class="text-decoration-none text-reset">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Conductores</h5>
+                        <p class="card-text text-muted mb-2">
+                            Licencias, vencimientos, contacto.
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <a href="/admin/clientes" class="text-decoration-none text-reset">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Clientes</h5>
+                        <p class="card-text text-muted mb-2">
+                            Razón social, contactos, direcciones de servicio.
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <a href="/admin/rutas" class="text-decoration-none text-reset">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Rutas</h5>
+                        <p class="card-text text-muted mb-2">
+                            Puntos de subida/bajada, tiempos estimados.
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <a href="/admin/servicios" class="text-decoration-none text-reset">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Servicios</h5>
+                        <p class="card-text text-muted mb-2">
+                            Programación diaria, estado, kilometraje.
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

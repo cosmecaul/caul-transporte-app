@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Cliente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Script para formatear RUT -->
+    <script>
+        function formatRut(rut) {
+            rut = rut.replace(/[.-]/g, '').toUpperCase();
+            if (rut.length <= 1) return rut;
+
+            let body = rut.slice(0, -1);
+            let dv = rut.slice(-1);
+
+            body = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            return body + '-' + dv;
+        }
+
+        function applyRutFormat() {
+            const input = document.getElementById("rut-input");
+            input.value = formatRut(input.value);
+        }
+    </script>
+
+    <style>
+        /* Inputs flotantes (Uber style) */
+        .float-label {
+            position: relative;
+            margin-top: 1.5rem;
+        }
+        .float-label input,
+        .float-label select,
+        .float-label textarea {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: white;
+            outline: none;
+        }
+
+        .float-label label {
+            position: absolute;
+            left: 0.75rem;
+            top: 0.85rem;
+            color: #64748b;
+            cursor: text;
+            transition: all .2s ease-out;
+        }
+
+        .float-label input:focus + label,
+        .float-label input:not(:placeholder-shown) + label,
+        .float-label textarea:focus + label,
+        .float-label textarea:not(:placeholder-shown) + label,
+        .float-label select:focus + label,
+        .float-label select:not([value=""]) + label {
+            top: -0.55rem;
+            left: 0.6rem;
+            font-size: 0.7rem;
+            background: white;
+            padding: 0 0.25rem;
+            color: #0f172a;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<div class="max-w-3xl mx-auto py-6 px-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-xl font-semibold text-slate-900" th:text="${pageTitle}">Cliente</h1>
+
+        <a href="/admin/clientes"
+           class="px-3 py-1 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs">
+            ← Volver
+        </a>
+    </div>
+
+    <!-- Tarjeta del formulario -->
+    <div class="bg-white rounded-2xl shadow-sm border p-5">
+
+        <!-- IMPORTANTE: el form es el contexto para #fields -->
+        <form
+              th:object="${form}"
+              th:action="${clienteId != null} ? @{/admin/clientes/{id}/editar(id=${clienteId})} : @{/admin/clientes/nuevo}"
+              method="post"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- ERRORES GLOBALES -->
+            <div th:if="${#fields.hasErrors('*')}"
+                 class="col-span-2 mb-2 px-4 py-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs">
+                <ul class="list-disc list-inside space-y-1">
+                    <li th:each="err : ${#fields.errors('*')}"
+                        th:text="${err}">Error</li>
+                </ul>
+            </div>
+
+            <!-- RAZON SOCIAL -->
+            <div class="float-label col-span-2">
+                <input type="text" th:field="*{razonSocial}" placeholder=" "
+                       required maxlength="200" class="peer">
+                <label>Razón social *</label>
+
+                <p th:if="${#fields.hasErrors('razonSocial')}"
+                   th:errors="*{razonSocial}"
+                   class="text-xs text-red-600 mt-1"></p>
+            </div>
+
+            <!-- RUT -->
+            <div class="float-label">
+                <input id="rut-input" type="text" th:field="*{rut}" placeholder=" "
+                       required maxlength="12" oninput="applyRutFormat()">
+                <label>RUT *</label>
+                <p th:if="${#fields.hasErrors('rut')}"
+                   th:errors="*{rut}" class="text-xs text-red-600 mt-1"></p>
+            </div>
+
+            <!-- GIRO -->
+            <div class="float-label">
+                <input type="text" th:field="*{giro}" placeholder=" ">
+                <label>Giro</label>
+            </div>
+
+            <!-- DIRECCIÓN -->
+            <div class="float-label col-span-2">
+                <input type="text" th:field="*{direccion}" placeholder=" ">
+                <label>Dirección</label>
+            </div>
+
+            <!-- COMUNA -->
+			<div class="float-label">
+			    <select th:field="*{comuna}">
+			        <option value="" disabled>Seleccione…</option>
+			        <option value="Antofagasta">Antofagasta</option>
+			        <option value="Mejillones">Mejillones</option>
+			        <option value="Tocopilla">Tocopilla</option>
+			        <option value="Calama">Calama</option>
+			        <option value="María Elena">María Elena</option>
+			        <option value="Otra">Otra</option>
+			    </select>
+			    <label>Comuna</label>
+			</div>
+            <!-- CIUDAD -->
+			<div class="float-label">
+			    <select th:field="*{ciudad}">
+			        <option value="" disabled>Seleccione…</option>
+			        <option value="Antofagasta">Antofagasta</option>
+			        <option value="Mejillones">Mejillones</option>
+			        <option value="Tocopilla">Tocopilla</option>
+			        <option value="Calama">Calama</option>
+			        <option value="Otra">Otra</option>
+			    </select>
+			    <label>Ciudad</label>
+			</div>
+            <!-- CONTACTO NOMBRE -->
+            <div class="float-label">
+                <input type="text" th:field="*{contactoNombre}" placeholder=" ">
+                <label>Nombre contacto</label>
+            </div>
+
+            <!-- CONTACTO EMAIL -->
+            <div class="float-label">
+                <input type="email" th:field="*{contactoEmail}" placeholder=" ">
+                <label>Email contacto</label>
+            </div>
+
+            <!-- CONTACTO FONO -->
+            <div class="float-label">
+                <input type="text" th:field="*{contactoFono}" placeholder=" ">
+                <label>Teléfono contacto</label>
+            </div>
+
+            <!-- ACTIVO -->
+            <div class="float-label">
+                <select th:field="*{activo}">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
+                <label>Estado</label>
+            </div>
+
+            <!-- BOTÓN GUARDAR -->
+            <div class="col-span-2 mt-4 flex justify-end">
+                <button type="submit"
+                        class="px-5 py-2 bg-slate-900 text-white text-sm rounded-full hover:bg-slate-800">
+                    Guardar cliente
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

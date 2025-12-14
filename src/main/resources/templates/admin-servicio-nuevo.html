@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Transportes CAUL | Nuevo servicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(148, 163, 184, 0.7);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex md:flex-col w-64 bg-slate-900 text-slate-100">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center text-lg font-bold">
+                T
+            </div>
+            <div>
+                <div class="text-sm font-semibold">Transportes CAUL</div>
+                <div class="text-xs text-slate-400">Panel de administración</div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-3 py-4 text-sm space-y-1">
+            <a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="mt-2 mb-1 text-[11px] uppercase tracking-wide text-slate-500 px-3">
+                Maestros
+            </div>
+
+            <a href="/admin/conductores" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>🚗</span>
+                <span>Conductores</span>
+            </a>
+            <a href="/admin/vehiculos" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>🚙</span>
+                <span>Vehículos</span>
+            </a>
+            <a href="/admin/clientes" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>👥</span>
+                <span>Clientes</span>
+            </a>
+            <a href="/admin/rutas" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>🧭</span>
+                <span>Rutas</span>
+            </a>
+
+            <div class="mt-3 mb-1 text-[11px] uppercase tracking-wide text-slate-500 px-3">
+                Operación
+            </div>
+
+            <a href="/aplicacion/servicios" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-800">
+                <span>🧾</span>
+                <span>Servicios (hoy)</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-3 border-t border-slate-800 text-xs text-slate-400">
+            © <span id="yearSpanSidebar"></span> Transportes CAUL
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+        <!-- Barra superior -->
+        <header class="w-full bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-900 text-white">
+                    T
+                </button>
+            <div>
+                <div class="flex items-center gap-2 text-[11px] text-slate-400 mb-0.5">
+                    <a href="/admin" class="hover:text-slate-600">Dashboard</a>
+                    <span>/</span>
+                    <a href="/aplicacion/servicios" class="hover:text-slate-600">Servicios</a>
+                    <span>/</span>
+                    <span class="text-slate-500">Nuevo</span>
+                </div>
+                <h1 class="text-lg md:text-2xl font-semibold text-slate-900 flex items-center gap-2">
+                    Nuevo servicio
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-600">
+                        Programación + pasajeros
+                    </span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-500">
+                    Crea un servicio asignando cliente, vehículo, conductor, ruta y pasajeros.
+                </p>
+            </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex flex-col text-right">
+                    <span class="text-xs text-slate-400">Usuario</span>
+                    <span class="text-xs md:text-sm font-medium text-slate-700">admin</span>
+                </div>
+                <a href="/logout"
+                   class="text-xs md:text-sm font-medium px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- Contenido -->
+        <div class="flex-1 px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
+            <div class="max-w-5xl mx-auto space-y-4">
+
+                <!-- Mensajes flash -->
+                <div th:if="${messageSuccess}" class="rounded-xl bg-emerald-50 text-emerald-800 text-xs px-3 py-2 border border-emerald-100">
+                    <span class="font-semibold">Listo:</span>
+                    <span th:text="${messageSuccess}"></span>
+                </div>
+                <div th:if="${messageError}" class="rounded-xl bg-red-50 text-red-800 text-xs px-3 py-2 border border-red-100">
+                    <span class="font-semibold">Error:</span>
+                    <span th:text="${messageError}"></span>
+                </div>
+
+                <!-- Tarjeta principal -->
+                <section class="bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="px-4 md:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-sm md:text-base font-semibold text-slate-900">
+                                Programar nuevo servicio
+                            </h2>
+                            <p class="text-xs text-slate-500">
+                                Los campos marcados con <span class="text-red-500">*</span> son obligatorios.
+                            </p>
+                        </div>
+                        <div class="hidden sm:flex flex-col items-end text-[11px] text-slate-400">
+                            <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}">01/12/2025</span>
+                            <span>Fecha de creación</span>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/admin/servicios/nuevo}"
+                          th:object="${form}"
+                          method="post"
+                          class="px-4 md:px-6 py-5 space-y-6 text-xs md:text-sm">
+
+                        <!-- 1. Datos de programación -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-slate-900">
+                                        Datos de programación
+                                    </h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-[11px] text-slate-600">
+                                        Fecha y horarios
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Fecha -->
+                                <div class="flex flex-col gap-1.5 md:col-span-1">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Fecha del servicio <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="date"
+                                           th:field="*{fecha}"
+                                           required
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400" />
+                                </div>
+
+                                <!-- Hora inicio -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Hora inicio programada <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="time"
+                                           th:field="*{horaInicioProgramada}"
+                                           required
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400" />
+                                </div>
+
+                                <!-- Hora fin -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Hora fin programada <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="time"
+                                           th:field="*{horaFinProgramada}"
+                                           required
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400" />
+                                    <p class="text-[11px] text-slate-400">
+                                        El sistema validará que la hora fin sea posterior a la de inicio.
+                                    </p>
+                                </div>
+
+                                <!-- Turno -->
+                                <div class="flex flex-col gap-1.5 md:col-span-3">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Turno (opcional)
+                                    </label>
+                                    <input type="text"
+                                           th:field="*{turno}"
+                                           placeholder="Ej: AM, PM, NOCHE, TURNO 1"
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Asignaciones -->
+                        <div class="space-y-3 pt-3 border-t border-dashed border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-slate-900">
+                                        Asignaciones
+                                    </h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-[11px] text-emerald-700">
+                                        Cliente · Vehículo · Conductor · Ruta
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Cliente -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Cliente <span class="text-red-500">*</span>
+                                    </label>
+                                    <select th:field="*{clienteId}"
+                                            required
+                                            class="border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400">
+                                        <option value="">Seleccionar cliente</option>
+                                        <option th:each="c : ${clientes}"
+                                                th:value="${c.id}"
+                                                th:text="${c.razonSocial != null ? c.razonSocial : c.nombre}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Vehículo -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Vehículo <span class="text-red-500">*</span>
+                                    </label>
+                                    <select th:field="*{vehiculoId}"
+                                            required
+                                            class="border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400">
+                                        <option value="">Seleccionar vehículo</option>
+                                        <option th:each="v : ${vehiculos}"
+                                                th:value="${v.id}"
+                                                th:text="${v.patente + (v.marcaModelo != null ? ' — ' + v.marcaModelo : '')}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Conductor -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Conductor <span class="text-red-500">*</span>
+                                    </label>
+                                    <select th:field="*{conductorId}"
+                                            required
+                                            class="border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400">
+                                        <option value="">Seleccionar conductor</option>
+                                        <option th:each="d : ${conductores}"
+                                                th:value="${d.id}"
+                                                th:text="${d.nombreCompleto != null ? d.nombreCompleto : d.nombre}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Ruta -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Ruta <span class="text-red-500">*</span>
+                                    </label>
+                                    <select th:field="*{rutaId}"
+                                            required
+                                            class="border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400">
+                                        <option value="">Seleccionar ruta</option>
+                                        <option th:each="r : ${rutas}"
+                                                th:value="${r.id}"
+                                                th:text="${r.nombre != null ? r.nombre : r.descripcion}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Detalles del viaje -->
+                        <div class="space-y-3 pt-3 border-t border-dashed border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-slate-900">
+                                        Detalles del viaje
+                                    </h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-50 text-[11px] text-sky-700">
+                                        Info para el chofer y el cliente
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Origen <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           th:field="*{origen}"
+                                           required
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
+                                           placeholder="Ej: Base Mejillones" />
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Destino <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           th:field="*{destino}"
+                                           required
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
+                                           placeholder="Ej: Planta Termoeléctrica" />
+                                </div>
+
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Código público (opcional)
+                                    </label>
+                                    <input type="text"
+                                           th:field="*{codigoPublico}"
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
+                                           placeholder="Ej: TURNO-M1" />
+                                    <p class="text-[11px] text-slate-400">
+                                        Código que podría ver el cliente en su app / voucher.
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600">
+                                        Velocidad máx. (km/h)
+                                    </label>
+                                    <input type="number" step="0.1"
+                                           th:field="*{velocidadMaxKmh}"
+                                           class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
+                                           placeholder="Ej: 90" />
+                                </div>
+                            </div>
+
+                            <div class="mt-3 flex flex-col gap-1.5">
+                                <label class="text-xs font-medium text-slate-600">
+                                    Observaciones internas
+                                </label>
+                                <textarea th:field="*{observaciones}"
+                                          rows="3"
+                                          class="border border-slate-200 rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
+                                          placeholder="Notas internas para operación (ej: pick-up adicional, desvío, restricciones del cliente, etc.)"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 4. Pasajeros -->
+                        <div class="space-y-3 pt-3 border-t border-dashed border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-slate-900">
+                                        Pasajeros
+                                    </h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-violet-50 text-[11px] text-violet-700">
+                                        Opcional · se guarda cantidad y detalle
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3 text-[11px] text-slate-500">
+                                    <span>
+                                        Cantidad de pasajeros:
+                                        <span id="cantidadPasajerosResumen"
+                                              th:text="*{cantidadPasajeros} ?: 0">0</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- campo oculto ligado al DTO -->
+                            <input type="hidden"
+                                   id="cantidadPasajerosInput"
+                                   th:field="*{cantidadPasajeros}" />
+
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-[11px] text-slate-500">
+                                    Usa el botón para agregar filas de pasajeros. La cantidad se actualiza automáticamente.
+                                </p>
+                                <button type="button"
+                                        onclick="agregarPasajeroFila()"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-slate-900 text-white hover:bg-slate-800">
+                                    + Agregar pasajero
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto border border-slate-100 rounded-xl">
+                                <table class="min-w-full text-xs">
+                                    <thead class="bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre</th>
+                                            <th class="px-3 py-2 text-left font-semibold text-slate-600">RUT</th>
+ 											 <th class="px-3 py-2 text-left font-semibold text-slate-600">Telefonono Cotacto</th> 
+ 											 <th class="px-3 py-2 text-left font-semibold text-slate-600">Punto subida</th>
+                                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Punto bajada</th>
+                                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Obs.</th>
+                                            <th class="px-3 py-2 text-center font-semibold text-slate-600">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaPasajerosBody" class="divide-y divide-slate-100">
+                                        <!-- Filas de pasajeros se agregan con JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-slate-100">
+                            <div class="text-[11px] text-slate-400">
+                                El sistema validará solapamientos de vehículo y conductor automáticamente.
+                            </div>
+                            <div class="flex items-center gap-2 justify-end">
+                                <a href="/aplicacion/servicios"
+                                   class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50">
+                                    Cancelar
+                                </a>
+                                <button type="submit"
+                                        class="text-xs md:text-sm px-4 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-sm">
+                                    Crear servicio
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const today = new Date();
+    const sidebarYearSpan = document.getElementById("yearSpanSidebar");
+    if (sidebarYearSpan) {
+        sidebarYearSpan.textContent = today.getFullYear();
+    }
+
+    // === Pasajeros dinámicos ===
+    let pasajeroIndex = 0;
+
+    function actualizarCantidadPasajeros() {
+        const tbody = document.getElementById("tablaPasajerosBody");
+        const filas = tbody ? tbody.querySelectorAll("tr").length : 0;
+        const inputCantidad = document.getElementById("cantidadPasajerosInput");
+        const resumenSpan = document.getElementById("cantidadPasajerosResumen");
+
+        if (inputCantidad) {
+            inputCantidad.value = filas;
+        }
+        if (resumenSpan) {
+            resumenSpan.textContent = filas;
+        }
+    }
+
+    function agregarPasajeroFila() {
+        const tbody = document.getElementById("tablaPasajerosBody");
+        if (!tbody) return;
+
+        const idx = pasajeroIndex++;
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td class="px-3 py-1.5">
+                <input type="text"
+                       name="pasajeros[${idx}].nombrePasajero"
+                       placeholder="Nombre pasajero"
+                       class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+            </td>
+            <td class="px-3 py-1.5">
+                <input type="text"
+                       name="pasajeros[${idx}].rutPasajero"
+                       placeholder="RUT"
+                       class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+            </td>
+			<td class="px-3 py-1.5">
+			    <input type="text"
+			           name="pasajeros[${idx}].telefonoContacto"
+			           placeholder="Telefono Contacto"
+			           class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+			</td>
+
+            <td class="px-3 py-1.5">
+                <input type="text"
+                       name="pasajeros[${idx}].puntoSubida"
+                       placeholder="Punto de subida"
+                       class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+            </td>
+            <td class="px-3 py-1.5">
+                <input type="text"
+                       name="pasajeros[${idx}].puntoBajada"
+                       placeholder="Punto de bajada"
+                       class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+            </td>
+            <td class="px-3 py-1.5">
+                <input type="text"
+                       name="pasajeros[${idx}].observaciones"
+                       placeholder="Obs."
+                       class="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900/10 focus:border-slate-400" />
+            </td>
+            <td class="px-3 py-1.5 text-center">
+                <button type="button"
+                        onclick="eliminarPasajeroFila(this)"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-[11px] bg-red-50 text-red-700 hover:bg-red-100 border border-red-100">
+                    Eliminar
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+        actualizarCantidadPasajeros();
+    }
+
+    function eliminarPasajeroFila(btn) {
+        const tr = btn.closest("tr");
+        if (tr) {
+            tr.remove();
+            actualizarCantidadPasajeros();
+        }
+    }
+</script>
+
+</body>
+</html>
+

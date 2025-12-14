@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Conductores | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between">
+        <div>
+            <h1 class="text-lg md:text-2xl font-semibold text-slate-900">Conductores</h1>
+            <p class="text-xs md:text-sm text-slate-500">
+                Gestión de conductores para Transporte CAUL.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/admin" class="text-xs md:text-sm px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100">
+                ← Volver al dashboard
+            </a>
+            <a href="/admin/conductores/nuevo"
+               class="text-xs md:text-sm px-3 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                + Nuevo conductor
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="flex-1 px-4 md:px-6 py-4 md:py-6">
+        <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-900">Listado de conductores</h2>
+                    <p class="text-xs text-slate-500">
+                        Vista solo lectura por ahora. Luego agregamos editar y desactivar.
+                    </p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-xs">
+                    <thead class="border-b border-slate-200 bg-slate-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">RUT</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Teléfono</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Email</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Licencia</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Vencimiento</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Estado</th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100" th:if="${conductores != null}">
+                    <tr th:each="c : ${conductores}">
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.nombreCompleto}">Nombre</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.rut}">RUT</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.telefono}">Teléfono</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.email}">Email</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.licenciaClase}">Clase</td>
+                        <td class="px-3 py-2 text-slate-700" th:text="${c.licenciaVencimiento}">2026-01-01</td>
+                        <td class="px-3 py-2">
+                            <span th:if="${c.activo}"
+                                  class="inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                                Activo
+                            </span>
+                            <span th:if="${!c.activo}"
+                                  class="inline-flex px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                                Inactivo
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(conductores)}">
+                        <td colspan="7" class="px-3 py-3 text-center text-slate-400">
+                            No hay conductores registrados aún.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

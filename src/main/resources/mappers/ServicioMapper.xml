@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.ServicioMapper">
+
+    <resultMap id="ServicioResult" type="cl.transporte.caul.model.Servicio">
+        <id     property="id"                 column="id"/>
+        <result property="idCliente"          column="id_cliente"/>
+        <result property="idRuta"             column="id_ruta"/>
+        <result property="idVehiculo"         column="id_vehiculo"/>
+        <result property="idConductor"        column="id_conductor"/>
+
+        <result property="fecha"              column="fecha"/>
+        <result property="horaInicioProgramada" column="hora_inicio_programada"/>
+        <result property="horaFinProgramada"  column="hora_fin_programada"/>
+
+        <result property="turno"              column="turno"/>
+        <result property="origen"             column="origen"/>
+        <result property="destino"            column="destino"/>
+        <result property="estado"             column="estado"/>
+
+        <result property="codigoPublico"      column="codigo_publico"/>
+        <result property="velocidadMaxKmh"    column="velocidad_max_kmh"/>
+        <result property="observaciones"      column="observaciones"/>
+
+        <result property="createdAt"          column="created_at"/>
+        <result property="updatedAt"          column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ServicioResult">
+        SELECT * FROM servicio
+        ORDER BY fecha DESC, hora_inicio_programada DESC;
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="ServicioResult">
+        SELECT * FROM servicio WHERE id = #{id};
+    </select>
+
+    <insert id="insert"
+            parameterType="cl.transporte.caul.model.Servicio"
+            useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO servicio (
+            id_cliente,
+            id_ruta,
+            id_vehiculo,
+            id_conductor,
+            fecha,
+            hora_inicio_programada,
+            hora_fin_programada,
+            turno,
+            origen,
+            destino,
+            estado,
+            codigo_publico,
+            velocidad_max_kmh,
+            observaciones
+        ) VALUES (
+            #{idCliente},
+            #{idRuta},
+            #{idVehiculo},
+            #{idConductor},
+            #{fecha},
+            #{horaInicioProgramada},
+            #{horaFinProgramada},
+            #{turno},
+            #{origen},
+            #{destino},
+            #{estado},
+            #{codigoPublico},
+            #{velocidadMaxKmh},
+            #{observaciones}
+        );
+    </insert>
+
+    <update id="update"
+            parameterType="cl.transporte.caul.model.Servicio">
+
+        UPDATE servicio
+        SET
+            id_cliente           = #{idCliente},
+            id_ruta              = #{idRuta},
+            id_vehiculo          = #{idVehiculo},
+            id_conductor         = #{idConductor},
+            fecha                = #{fecha},
+            hora_inicio_programada = #{horaInicioProgramada},
+            hora_fin_programada  = #{horaFinProgramada},
+            turno                = #{turno},
+            origen               = #{origen},
+            destino              = #{destino},
+            estado               = #{estado},
+            codigo_publico       = #{codigoPublico},
+            velocidad_max_kmh    = #{velocidadMaxKmh},
+            observaciones        = #{observaciones}
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM servicio WHERE id = #{id};
+    </delete>
+    
+<select id="findByConductorAll" resultMap="ServicioResult">
+  <![CDATA[
+  SELECT *
+  FROM servicio
+  WHERE id_conductor = #{idConductor}
+  ORDER BY fecha DESC, hora_inicio_programada DESC, id DESC
+  ]]>
+</select>
+
+<select id="findByConductorAndRangoFechas" resultMap="ServicioResult">
+  <![CDATA[
+  SELECT *
+  FROM servicio
+  WHERE id_conductor = #{idConductor}
+    AND (#{desde} IS NULL OR fecha >= #{desde})
+    AND (#{hasta} IS NULL OR fecha <= #{hasta})
+  ORDER BY fecha DESC, hora_inicio_programada DESC, id DESC
+  ]]>
+</select>
+    
+
+</mapper>

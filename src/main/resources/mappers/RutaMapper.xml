@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.RutaMapper">
+
+    <resultMap id="RutaResult" type="cl.transporte.caul.model.Ruta">
+        <id     property="id"          column="id"/>
+        <result property="idCliente"   column="id_cliente"/>
+        <result property="nombre"      column="nombre"/>
+        <result property="descripcion" column="descripcion"/>
+        <result property="distanciaKmEst" column="distancia_km_est"/>
+        <result property="duracionMinEst" column="duracion_min_est"/>
+        <result property="activo"      column="activo"/>
+        <result property="createdAt"   column="created_at"/>
+        <result property="updatedAt"   column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RutaResult">
+        SELECT * FROM ruta
+        WHERE activo = 1
+        ORDER BY nombre
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="RutaResult">
+        SELECT * FROM ruta WHERE id = #{id}
+    </select>
+
+    <select id="findByCliente" parameterType="long" resultMap="RutaResult">
+        SELECT * FROM ruta
+        WHERE id_cliente = #{idCliente}
+        ORDER BY nombre
+    </select>
+
+    <insert id="insert" parameterType="cl.transporte.caul.model.Ruta"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ruta
+        (
+            id_cliente,
+            nombre,
+            descripcion,
+            distancia_km_est,
+            duracion_min_est,
+            activo
+        )
+        VALUES
+        (
+            #{idCliente},
+            #{nombre},
+            #{descripcion},
+            #{distanciaKmEst},
+            #{duracionMinEst},
+            #{activo}
+        )
+    </insert>
+
+    <update id="update" parameterType="cl.transporte.caul.model.Ruta">
+        UPDATE ruta
+        SET
+            id_cliente       = #{idCliente},
+            nombre           = #{nombre},
+            descripcion      = #{descripcion},
+            distancia_km_est = #{distanciaKmEst},
+            duracion_min_est = #{duracionMinEst},
+            activo           = #{activo}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM ruta WHERE id = #{id}
+    </delete>
+
+</mapper>

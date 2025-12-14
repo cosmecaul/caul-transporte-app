@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.transporte.caul.mapper.RutaPuntoMapper">
+
+    <resultMap id="RutaPuntoResult" type="cl.transporte.caul.model.RutaPunto">
+        <id     property="id"        column="id"/>
+        <result property="idRuta"    column="id_ruta"/>
+        <result property="orden"     column="orden"/>
+        <result property="tipoPunto" column="tipo_punto"/>
+        <result property="nombre"    column="nombre"/>
+        <result property="direccion" column="direccion"/>
+        <result property="latitud"   column="latitud"/>
+        <result property="longitud"  column="longitud"/>
+        <result property="horaRef"   column="hora_ref"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findByRuta" parameterType="long" resultMap="RutaPuntoResult">
+        SELECT * FROM ruta_punto
+        WHERE id_ruta = #{idRuta}
+        ORDER BY orden
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="RutaPuntoResult">
+        SELECT * FROM ruta_punto WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="cl.transporte.caul.model.RutaPunto"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ruta_punto
+        (
+            id_ruta,
+            orden,
+            tipo_punto,
+            nombre,
+            direccion,
+            latitud,
+            longitud,
+            hora_ref
+        )
+        VALUES
+        (
+            #{idRuta},
+            #{orden},
+            #{tipoPunto},
+            #{nombre},
+            #{direccion},
+            #{latitud},
+            #{longitud},
+            #{horaRef}
+        )
+    </insert>
+
+    <update id="update" parameterType="cl.transporte.caul.model.RutaPunto">
+        UPDATE ruta_punto
+        SET
+            id_ruta   = #{idRuta},
+            orden     = #{orden},
+            tipo_punto = #{tipoPunto},
+            nombre    = #{nombre},
+            direccion = #{direccion},
+            latitud   = #{latitud},
+            longitud  = #{longitud},
+            hora_ref  = #{horaRef}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM ruta_punto WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByRuta" parameterType="long">
+        DELETE FROM ruta_punto WHERE id_ruta = #{idRuta}
+    </delete>
+
+</mapper>
